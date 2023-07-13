@@ -1,0 +1,18 @@
+- hosts: "{{host_play}}"
+  vars_prompt:
+     - name: host_play
+       prompt: what is your host?
+       private: no
+
+  become: true  
+  tasks:
+   - name: Copy files.
+     copy:
+      src: '{{item}}'
+      dest: '{{item}}'
+     loop:
+         - : "{{host_play}}"
+           vars_prompt:
+           - name: host_play
+           prompt: what is your host?
+           private: no

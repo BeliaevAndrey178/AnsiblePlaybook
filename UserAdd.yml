@@ -1,0 +1,32 @@
+---
+- hosts: "{{host_play}}"
+  vars_prompt:
+    - name: host_play
+      prompt: What is your host?
+      private: no
+
+    - name: username
+      prompt: What is your username?
+      private: no
+
+    - name: user_passwd
+      prompt: What is your password?
+      private: yes
+      encrypt: sha512_crypt
+      confirm: yes
+      unsafe: yes
+
+  tasks:
+
+    - name: user add
+      user:
+        name: "{{username}}"
+        password: "{{ user_passwd }}"
+        groups: 
+        shell: /bin/bash
+        comment: ansible_user_nms
+        createhome: yes
+        home: /home/{{ username }}
+
+    - name: Deploy SSH Key
+      authorized_key: user="{{username}}" key="{{ lookup('file', '/root/.ssh/id_rsa.pub') }}" state=present
